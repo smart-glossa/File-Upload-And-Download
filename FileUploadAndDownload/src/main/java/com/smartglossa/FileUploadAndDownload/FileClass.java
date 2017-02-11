@@ -1,6 +1,7 @@
 package com.smartglossa.FileUploadAndDownload;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -37,6 +38,20 @@ public class FileClass {
 
 		
 	}
+	public Blob getProfileImage(int imageid) throws Exception {
+		try {
+			String query = "select image from image where imgeId='" + imageid + "'";
+			rs = stat.executeQuery(query);
+			Blob b = null;
+			if (rs.next()) {
+				b = rs.getBlob("image");
+			}
+			return b;
+		} finally {
+			closeConnection();
+		}
+	}
+
 	private void openConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/FileUploadAndDownload", "root", "root");
