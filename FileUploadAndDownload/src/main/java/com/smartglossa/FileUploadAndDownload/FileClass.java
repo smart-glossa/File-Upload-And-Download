@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.commons.fileupload.FileItem;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FileClass {
@@ -27,7 +28,7 @@ public class FileClass {
 	try {
 		//String query="insert into image(image)values('"+image+"')";
 		//stat.execute(query);
-		ps = conn.prepareStatement("insert into image(image) values(?)");
+		ps = conn.prepareStatement("insert into images(image) values(?)");
 		//ps.setString(2, uname);
 		ps.setBinaryStream(1, image.getInputStream(), (int) image.getSize());
 		ps.executeUpdate();
@@ -38,23 +39,31 @@ public class FileClass {
 
 		
 	}
-	public Blob getProfileImage(int imageid) throws Exception {
+	
+	public JSONArray getAll() throws SQLException {
+		JSONArray result = new JSONArray();
 		try {
-			String query = "select image from image where imgeId='" + imageid + "'";
+			String query = "select * from images";
 			rs = stat.executeQuery(query);
-			Blob b = null;
-			if (rs.next()) {
-				b = rs.getBlob("image");
+			while (rs.next()) {
+				JSONObject obj = new JSONObject();
+				obj.put("imageId", rs.getInt("imageId"));
+				obj.put("image", rs.getString("image"));
+				result.put(obj);
+
 			}
-			return b;
+
 		} finally {
 			closeConnection();
+
 		}
+		return result;
+
 	}
 
 	private void openConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/FileUploadAndDownload", "root", "root");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/FileUpload", "root", "root");
 		stat = conn.createStatement();
 	}
 

@@ -15,6 +15,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FileServlet extends HttpServlet {
@@ -46,29 +47,21 @@ public class FileServlet extends HttpServlet {
 		response.getWriter().println(result);
 
 	}
-		 else if (operation.equals("getProfilePicture")) {
-	            int imgid= Integer.parseInt(request.getParameter("imageId"));
-
-	            try {
-	                FileClass file = new FileClass();
-	                Blob b = file.getProfileImage(imgid);
-	                if (b != null) {
-	                    response.setContentType("image/png;base64;");
-	                    response.setContentLength((int) b.length());
-	                    InputStream is = b.getBinaryStream();
-	                    OutputStream os = response.getOutputStream();
-	                    byte buf[] = new byte[(int) b.length()];
-	                    byte[] result = Base64.encodeBase64(buf);
-	                    is.read(result);
-	                    os.write(result);
-	                    os.close();
-	                }
-
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
-	           
-	}
+		
+		else if(operation.equals("getAll")){
+			DiskFileItemFactory factory1 = new DiskFileItemFactory();
+			ServletFileUpload sfu1 = new ServletFileUpload(factory);
+			JSONArray result=new JSONArray();
+			try {
+				List<FileItem> items = sfu.parseRequest(request);
+				FileItem image = (FileItem) items.get(0);
+				FileClass file=new FileClass();
+				result=file.getAll();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			response.getWriter().println(result);
+		}
 	
 }
 }

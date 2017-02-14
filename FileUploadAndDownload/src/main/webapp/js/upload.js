@@ -1,6 +1,9 @@
 $(document).on("click","#signup",function(key) {
+	    var file=$('#profile').val();
+	    var url="/FileUploadAndDownload/File?operation=add&image="+file+"";
         var request = new FormData();                  
         request.append('file', $('#profile')[0].files[0]);
+       
         $.ajax({
             url : url,
             type : 'POST',
